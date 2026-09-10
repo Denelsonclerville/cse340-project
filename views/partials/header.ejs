@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%- title %></title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title><%- title %> | Serve Together</title>
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
     <header>
-        <nav>
-        <img src="/css/images/logo.webp" alt="Site Logo">
+        <nav aria-label="Main navigation">
+            <a class="brand" href="/" aria-label="Serve Together home"><img src="/images/cse340-service-network.png" alt=""> <span>Serve<br><em>Together</em></span></a>
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/organizations">Organizations</a></li>
-                <li><a href="/projects">Projects</a></li>
-                <li><a href="/categories">Categories</a></li>
+                <li><a class="<%= title === 'Serve Together' ? 'active' : '' %>" href="/">Home</a></li>
+                <li><a class="<%= title === 'Organizations' ? 'active' : '' %>" href="/organizations">Organizations</a></li>
+                <li><a class="<%= title === 'Service Projects' ? 'active' : '' %>" href="/projects">Projects</a></li>
+                <li><a class="<%= title === 'Project Categories' ? 'active' : '' %>" href="/categories">Categories</a></li>
             </ul>
         </nav>
     </header>

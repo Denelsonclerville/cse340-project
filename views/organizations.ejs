@@ -1,4 +1,19 @@
 <%- include('partials/header') %>
-<h1><%= title %></h1>
-<p>Explore local organizations making an impact.</p>
+<section class="page-intro">
+    <p class="eyebrow">THE PEOPLE BEHIND THE WORK</p>
+    <h1><%= title %></h1>
+    <p class="lead">Meet local groups turning small acts of service into lasting change.</p>
+</section>
+<section class="list-grid" aria-label="Community organizations">
+    <% organizations.forEach((organization, index) => { %>
+        <article class="list-card">
+            <img class="organization-image" src="<%= organization.image %>" alt="<%= organization.name %> logo">
+            <span class="card-number">0<%= index + 1 %></span>
+            <h2><%= organization.name %></h2>
+            <p><%= organization.focus %></p>
+            <p class="tag"><%= organization.projects %> active projects</p>
+            <a class="text-link" href="/projects">View projects <span aria-hidden="true">&#8594;</span></a>
+        </article>
+    <% }) %>
+</section>
 <%- include('partials/footer') %>

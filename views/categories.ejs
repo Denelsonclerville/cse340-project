@@ -1,9 +1,17 @@
 <%- include('partials/header') %>
-<h1><%= title %></h1>
-<ul>
-    <li>Environmental</li>
-    <li>Educational</li>
-    <li>Community Service</li>
-    <li>Health and Wellness</li>
-</ul>
+<section class="page-intro">
+    <p class="eyebrow">FIND YOUR FOCUS</p>
+    <h1><%= title %></h1>
+    <p class="lead">Start with what matters to you, then discover a way to help.</p>
+</section>
+<section class="category-grid" aria-label="Service project categories">
+    <% categories.forEach((category, index) => { %>
+        <a class="category-card accent-<%= index + 1 %>" href="/projects">
+            <span class="card-number">0<%= index + 1 %></span>
+            <h2><%= category.name %></h2>
+            <p><%= category.description %></p>
+            <span class="category-count"><%= category.count %> projects <span aria-hidden="true">&#8594;</span></span>
+        </a>
+    <% }) %>
+</section>
 <%- include('partials/footer') %>

@@ -1,4 +1,21 @@
 <%- include('partials/header') %>
-<h1><%= title %></h1>
-<p>Discover service projects and community initiatives.</p>
+<section class="page-intro">
+    <p class="eyebrow">MAKE A DIFFERENCE</p>
+    <h1><%= title %></h1>
+    <p class="lead">Choose an opportunity that matches your interests, schedule, and neighborhood.</p>
+</section>
+<section class="project-list" aria-label="Service projects">
+    <% projects.forEach((project, index) => { %>
+        <article class="project-row">
+            <span class="card-number">0<%= index + 1 %></span>
+            <div>
+                <p class="tag"><%= project.category %></p>
+                <h2><%= project.name %></h2>
+            </div>
+            <p class="muted"><%= project.location %></p>
+            <p class="date"><%= project.date %></p>
+            <a class="arrow-link" href="/organizations" aria-label="Learn more about <%= project.name %>">&#8594;</a>
+        </article>
+    <% }) %>
+</section>
 <%- include('partials/footer') %>
