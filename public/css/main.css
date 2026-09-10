@@ -15,12 +15,45 @@
     --line: #d9ddd3;
 }
 
+html,
 body {
-    background: #b9d9f2;
-    color: var(--ink);
+    background-color: lightblue;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav li {
+    display: inline;
+    margin-right: 15px;
+}
+
+nav a {
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #0066cc;
 }
 
 .main-logo {
@@ -68,7 +101,9 @@ body {
 .category-card {
     background: var(--white);
     border-top: 5px solid var(--teal);
+    min-width: 0;
     padding: 1.5rem;
+    overflow-wrap: anywhere;
 }
 
 .project-card:nth-child(2),
@@ -103,6 +138,10 @@ body {
     object-fit: contain;
     padding: 1rem;
     width: 100%;
+}
+
+img {
+    max-width: 100%;
 }
 
 .project-list {
@@ -177,9 +216,11 @@ nav a.active {
 }
 
 main {
+    flex: 1;
     margin: 0 auto;
     max-width: 1180px;
     padding: 4rem 5vw 5rem;
+    width: 100%;
 }
 
 h1,
@@ -305,6 +346,7 @@ p {
     display: grid;
     gap: 1rem;
     grid-template-columns: 50px 1.5fr 1fr 1fr;
+    min-width: 0;
     padding: 1.4rem 0;
 }
 
@@ -325,8 +367,10 @@ p {
 footer {
     background: var(--ink);
     color: var(--white);
+    flex-shrink: 0;
     padding: 1.5rem 5vw;
     text-align: center;
+    width: 100%;
 }
 
 footer p {
@@ -359,11 +403,16 @@ footer p {
     }
 
     .project-row {
-        grid-template-columns: 35px 1fr;
+        grid-template-columns: 35px minmax(0, 1fr);
     }
 
     .project-row > p {
         grid-column: 2;
+    }
+
+    .project-row .arrow-link {
+        grid-column: 2;
+        justify-self: start;
     }
 
     .card-grid,
