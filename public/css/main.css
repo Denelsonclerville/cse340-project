@@ -17,7 +17,7 @@
 
 html,
 body {
-    background-color: lightblue;
+    background-color: var(--paper);
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -174,8 +174,21 @@ img {
 
 header {
     background: var(--ink);
+    border-bottom: 4px solid var(--coral);
+    box-shadow: 0 3px 0 var(--yellow);
     color: var(--white);
-    padding: 1rem 5vw;
+    padding: .85rem 5vw;
+}
+
+.brand img {
+    background: var(--white);
+    border: 2px solid var(--white);
+    border-radius: 4px;
+    display: block;
+    height: 68px;
+    object-fit: contain;
+    padding: .35rem .6rem;
+    width: 205px;
 }
 
 nav {
@@ -187,7 +200,7 @@ nav {
 }
 
 .brand {
-    color: var(--white);
+    color: var(--ink);
     font-size: 1.2rem;
     font-weight: bold;
     line-height: 1;
@@ -387,6 +400,11 @@ footer p {
     nav ul {
         flex-wrap: wrap;
         gap: .5rem 1rem;
+    }
+
+    .brand img {
+        height: 58px;
+        width: 175px;
     }
 
     main {
