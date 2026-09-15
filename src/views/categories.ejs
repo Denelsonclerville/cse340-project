@@ -4,14 +4,26 @@
     <h1><%= title %></h1>
     <p class="lead">Start with what matters to you, then discover a way to help.</p>
 </section>
-<section class="category-grid" aria-label="Service project categories">
-    <% categories.forEach((category, index) => { %>
-        <a class="category-card accent-<%= index + 1 %>" href="/projects">
-            <span class="card-number">0<%= index + 1 %></span>
-            <h2><%= category.name %></h2>
-            <p><%= category.description %></p>
-            <span class="category-count"><%= category.count %> projects <span aria-hidden="true">&#8594;</span></span>
-        </a>
-    <% }) %>
+<section class="categories-section" aria-labelledby="category-list-title">
+    <div class="section-heading">
+        <h2 id="category-list-title">Browse by category</h2>
+        <p class="muted"><%= categories.length %> ways to get involved</p>
+    </div>
+    <% if (errorMessage) { %>
+        <p class="empty-state"><%= errorMessage %></p>
+    <% } else if (categories.length) { %>
+        <ul class="category-grid">
+            <% categories.forEach((category, index) => { %>
+                <li class="category-card">
+                    <span class="card-number" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
+                    <h3><%= category.name %></h3>
+                    <p class="muted">Find a meaningful way to contribute.</p>
+                    <a class="text-link" href="/projects">View projects <span aria-hidden="true">&#8594;</span></a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p class="empty-state">No project categories are available yet.</p>
+    <% } %>
 </section>
 <%- include('partials/footer') %>

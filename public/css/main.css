@@ -101,9 +101,20 @@ nav a:hover {
 .category-card {
     background: var(--white);
     border-top: 5px solid var(--teal);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 18px rgba(24, 43, 42, .08);
     min-width: 0;
     padding: 1.5rem;
     overflow-wrap: anywhere;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.project-card:hover,
+.list-card:hover,
+.category-card:hover {
+    box-shadow: 0 12px 24px rgba(24, 43, 42, .14);
+    transform: translateY(-3px);
 }
 
 .project-card:nth-child(2),
@@ -116,6 +127,58 @@ nav a:hover {
 .list-card:nth-child(3),
 .category-card:nth-child(3) {
     border-color: var(--yellow);
+}
+
+.category-card:nth-child(4n) {
+    border-color: var(--coral);
+}
+
+.category-card h2 {
+    margin: .65rem 0 .5rem;
+}
+
+.category-card h3 {
+    font-size: 1.5rem;
+    line-height: 1.1;
+    margin: .65rem 0 .5rem;
+}
+
+.category-card p {
+    min-height: 3.2rem;
+}
+
+.category-card .text-link {
+    margin-top: auto;
+}
+
+.category-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    list-style: none;
+}
+
+.categories-section {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+}
+
+.section-heading {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.section-heading h2,
+.section-heading p {
+    margin: 0;
+}
+
+.empty-state {
+    background: var(--white);
+    border-left: 5px solid var(--yellow);
+    box-shadow: 0 8px 18px rgba(24, 43, 42, .08);
+    color: var(--muted);
+    padding: 1.25rem 1.5rem;
 }
 
 .card-number,
@@ -276,6 +339,34 @@ p {
 
 .hero h1 {
     margin-top: .75rem;
+}
+
+footer {
+    background: var(--ink);
+    color: var(--white);
+    padding: 1.5rem 5vw;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+    nav {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        gap: .75rem 1.25rem;
+    }
+
+    main {
+        padding-top: 2.5rem;
+    }
 }
 
 .button {

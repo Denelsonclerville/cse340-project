@@ -1,6 +1,7 @@
 import express from "express";
 import { fileURLToPath } from "url";
 import path from "path";
+import { getAllCategories } from "./src/models/categories.js";
 
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "production";
 const PORT = process.env.PORT || 3000;
@@ -47,16 +48,23 @@ app.get("/projects", (req, res) => {
   });
 });
 
-app.get("/categories", (req, res) => {
-  res.render("categories", {
-    title: "Project Categories",
-    categories: [
-      { name: "Environmental", description: "Care for parks, gardens, and local wildlife.", count: 12 },
-      { name: "Educational", description: "Help learners grow through tutoring and mentoring.", count: 8 },
-      { name: "Community Service", description: "Strengthen neighborhoods through practical support.", count: 15 },
-      { name: "Health and Wellness", description: "Create healthier, more connected communities.", count: 6 },
-    ],
-  });
+app.get("/categories", async (req, res) => {
+  try {
+    const categories = await getAllCategories();
+
+    res.render("categories", {
+      title: "Project Categories",
+      categories,
+      errorMessage: null,
+    });
+  } catch (error) {
+    console.error("Unable to load categories:", error);
+    res.status(500).render("categories", {
+      title: "Project Categories",
+      categories: [],
+      errorMessage: "Categories are temporarily unavailable. Please try again later.",
+    });
+  }
 });
 
 app.listen(PORT, () => {
