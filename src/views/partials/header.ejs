@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%- title %> | Serve Together</title>
     <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/navigation.js" defer></script>
 </head>
 <body>
     <header>
-        <nav aria-label="Main navigation">
-            <a class="brand" href="/" aria-label="Serve Together home"><img src="/images/cse340-service-network.png" alt=""></a>
+        <a class="brand" href="/" aria-label="Serve Together home"><img src="/images/cse340-service-network.png" alt=""></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="site-navigation" aria-expanded="false"><span class="menu-icon-open" aria-hidden="true">☰</span><span class="menu-icon-close" aria-hidden="true">✕</span></button>
+        <div class="nav-overlay" aria-hidden="true"></div>
+        <nav id="site-navigation" aria-label="Main navigation">
+            <button class="menu-close" type="button" aria-label="Close navigation">✕</button>
             <ul>
                 <li><a class="<%= title === 'Serve Together' ? 'active' : '' %>" href="/">Home</a></li>
                 <li><a class="<%= title === 'Organizations' ? 'active' : '' %>" href="/organizations">Organizations</a></li>

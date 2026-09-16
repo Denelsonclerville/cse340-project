@@ -1,15 +1,46 @@
-CREATE TABLE IF NOT EXISTS project (
-    project_id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS organization (
+    organization_id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
-INSERT INTO project (name)
+INSERT INTO organization (name)
 VALUES
-    ('Park Cleanup'),
-    ('Food Drive'),
-    ('Community Tutoring'),
-    ('Wellness Walk')
+    ('BrightFuture Builders'),
+    ('GreenHarvest Growers'),
+    ('UnityServe Volunteers')
 ON CONFLICT (name) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS project (
+    project_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    organization_id INTEGER REFERENCES organization(organization_id) ON DELETE SET NULL
+);
+
+ALTER TABLE project
+ADD COLUMN IF NOT EXISTS organization_id INTEGER;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'project_organization_id_fkey'
+    ) THEN
+        ALTER TABLE project
+        ADD CONSTRAINT project_organization_id_fkey
+        FOREIGN KEY (organization_id)
+        REFERENCES organization(organization_id)
+        ON DELETE SET NULL;
+    END IF;
+END $$;
+
+INSERT INTO project (name, organization_id)
+VALUES
+    ('Park Cleanup', (SELECT organization_id FROM organization WHERE name = 'GreenHarvest Growers')),
+    ('Food Drive', (SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers')),
+    ('Community Tutoring', (SELECT organization_id FROM organization WHERE name = 'BrightFuture Builders')),
+    ('Wellness Walk', (SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'))
+ON CONFLICT (name) DO UPDATE SET organization_id = EXCLUDED.organization_id;
 
 CREATE TABLE IF NOT EXISTS category (
     category_id SERIAL PRIMARY KEY,
