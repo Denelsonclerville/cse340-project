@@ -2,6 +2,8 @@ import express from "express";
 import { fileURLToPath } from "url";
 import path from "path";
 import { getAllCategories } from "./src/models/categories.js";
+import { getAllOrganizations } from "./src/models/organizations.js";
+import { getAllProjects } from "./src/models/projects.js";
 
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "production";
 const PORT = process.env.PORT || 3000;
@@ -14,38 +16,38 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.render("index", {
-    title: "Serve Together",
-    featuredProjects: [
-      { name: "Park Cleanup", category: "Environment", location: "Riverside", spots: 8 },
-      { name: "Food Drive", category: "Community Service", location: "Downtown", spots: 5 },
-      { name: "Community Tutoring", category: "Education", location: "Eastside", spots: 12 },
-    ],
-  });
+app.get("/", async (req, res) => {
+  try {
+    const projects = await getAllProjects();
+    res.render("index", {
+      title: "Serve Together",
+      featuredProjects: projects.slice(0, 3),
+      projectCount: projects.length,
+    });
+  } catch (error) {
+    console.error("Unable to load featured projects:", error);
+    res.status(500).render("index", { title: "Serve Together", featuredProjects: [], projectCount: 0 });
+  }
 });
 
-app.get("/organizations", (req, res) => {
-  res.render("organizations", {
-    title: "Organizations",
-    organizations: [
-      { name: "BrightFuture Builders", focus: "Community construction and support", projects: 4, image: "/images/brightfuture-logo.png" },
-      { name: "GreenHarvest Growers", focus: "Community gardens and food access", projects: 3, image: "/images/greenharvest-logo.png" },
-      { name: "UnityServe Volunteers", focus: "Neighbors helping neighbors", projects: 5, image: "/images/unityserve-logo.png" },
-    ],
-  });
+app.get("/organizations", async (req, res) => {
+  try {
+    const organizations = await getAllOrganizations();
+    res.render("organizations", { title: "Organizations", organizations });
+  } catch (error) {
+    console.error("Unable to load organizations:", error);
+    res.status(500).render("organizations", { title: "Organizations", organizations: [] });
+  }
 });
 
-app.get("/projects", (req, res) => {
-  res.render("projects", {
-    title: "Service Projects",
-    projects: [
-      { name: "Park Cleanup", category: "Environment", location: "Riverside", date: "Every Saturday" },
-      { name: "Food Drive", category: "Community Service", location: "Downtown", date: "June 15" },
-      { name: "Community Tutoring", category: "Education", location: "Eastside", date: "June 22" },
-      { name: "Wellness Walk", category: "Health and Wellness", location: "Central Park", date: "June 29" },
-    ],
-  });
+app.get("/projects", async (req, res) => {
+  try {
+    const projects = await getAllProjects();
+    res.render("projects", { title: "Service Projects", projects });
+  } catch (error) {
+    console.error("Unable to load projects:", error);
+    res.status(500).render("projects", { title: "Service Projects", projects: [] });
+  }
 });
 
 app.get("/categories", async (req, res) => {

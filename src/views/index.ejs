@@ -7,7 +7,7 @@
         <a class="button" href="/projects">Explore projects <span aria-hidden="true">&#8594;</span></a>
     </div>
     <div class="hero-stat" aria-label="Community impact statistic">
-        <strong>32</strong>
+        <strong><%= projectCount %></strong>
         <span>active opportunities</span>
     </div>
 </section>
@@ -24,7 +24,7 @@
             <span class="card-number">0<%= index + 1 %></span>
             <p class="tag"><%= project.category %></p>
             <h3><%= project.name %></h3>
-            <p class="muted"><%= project.location %> &middot; <%= project.spots %> spots open</p>
+            <p class="muted"><%= project.location %> &middot; <%= project.organization_name %></p>
             <a class="text-link" href="/projects">Learn more <span aria-hidden="true">&#8594;</span></a>
         </article>
     <% }) %>

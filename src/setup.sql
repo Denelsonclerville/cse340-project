@@ -1,76 +1,62 @@
-CREATE TABLE IF NOT EXISTS organization (
+DROP TABLE IF EXISTS project_category, project, category, organization CASCADE;
+
+CREATE TABLE organization (
     organization_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL
+    name VARCHAR(150) UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    contact_email VARCHAR(255) NOT NULL,
+    logo_filename VARCHAR(255) NOT NULL
 );
 
-INSERT INTO organization (name)
-VALUES
-    ('BrightFuture Builders'),
-    ('GreenHarvest Growers'),
-    ('UnityServe Volunteers')
-ON CONFLICT (name) DO NOTHING;
-
-CREATE TABLE IF NOT EXISTS project (
+CREATE TABLE project (
     project_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL,
-    organization_id INTEGER REFERENCES organization(organization_id) ON DELETE SET NULL
+    organization_id INTEGER REFERENCES organization(organization_id) ON DELETE CASCADE,
+    title VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    date VARCHAR(100) NOT NULL
 );
 
-ALTER TABLE project
-ADD COLUMN IF NOT EXISTS organization_id INTEGER;
-
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1
-        FROM pg_constraint
-        WHERE conname = 'project_organization_id_fkey'
-    ) THEN
-        ALTER TABLE project
-        ADD CONSTRAINT project_organization_id_fkey
-        FOREIGN KEY (organization_id)
-        REFERENCES organization(organization_id)
-        ON DELETE SET NULL;
-    END IF;
-END $$;
-
-INSERT INTO project (name, organization_id)
-VALUES
-    ('Park Cleanup', (SELECT organization_id FROM organization WHERE name = 'GreenHarvest Growers')),
-    ('Food Drive', (SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers')),
-    ('Community Tutoring', (SELECT organization_id FROM organization WHERE name = 'BrightFuture Builders')),
-    ('Wellness Walk', (SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'))
-ON CONFLICT (name) DO UPDATE SET organization_id = EXCLUDED.organization_id;
-
-CREATE TABLE IF NOT EXISTS category (
+CREATE TABLE category (
     category_id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS project_category (
-    project_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
-    PRIMARY KEY (project_id, category_id),
-    FOREIGN KEY (project_id) REFERENCES project(project_id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
+CREATE TABLE project_category (
+    project_id INTEGER NOT NULL REFERENCES project(project_id) ON DELETE CASCADE,
+    category_id INTEGER NOT NULL REFERENCES category(category_id) ON DELETE CASCADE,
+    PRIMARY KEY (project_id, category_id)
 );
 
-INSERT INTO category (name)
+INSERT INTO organization (name, description, contact_email, logo_filename)
 VALUES
-    ('Environment'),
-    ('Community Service'),
-    ('Education'),
-    ('Health and Wellness')
-ON CONFLICT (name) DO NOTHING;
+    ('BrightFuture Builders', 'Community construction and support programs.', 'contact@brightfuture.example', 'brightfuture-logo.png'),
+    ('GreenHarvest Growers', 'Community gardens and food access initiatives.', 'hello@greenharvest.example', 'greenharvest-logo.png'),
+    ('UnityServe Volunteers', 'Neighbors helping neighbors through local service.', 'team@unityserve.example', 'unityserve-logo.png');
+
+INSERT INTO project (organization_id, title, description, location, date)
+VALUES
+    (1, 'Community Center Repair', 'Repair and refresh shared community spaces.', 'Eastside', 'Every Saturday'),
+    (1, 'Accessible Ramp Build', 'Build safer access ramps for neighborhood facilities.', 'North Hills', 'June 15'),
+    (1, 'Youth Workshop Setup', 'Prepare a hands-on workshop space for local students.', 'Downtown', 'June 22'),
+    (1, 'Neighborhood Painting Day', 'Paint public areas that need a fresh finish.', 'West End', 'June 29'),
+    (1, 'Tool Lending Library', 'Organize tools and supplies for community use.', 'Eastside', 'July 6'),
+    (2, 'Park Cleanup', 'Restore trails and gathering areas in a local park.', 'Riverside', 'Every Saturday'),
+    (2, 'Community Garden Planting', 'Plant seasonal produce for neighborhood families.', 'Greenway', 'June 15'),
+    (2, 'Food Pantry Harvest', 'Harvest and sort fresh food for a community pantry.', 'Downtown', 'June 22'),
+    (2, 'Pollinator Garden Care', 'Maintain native plants that support local pollinators.', 'Riverside', 'June 29'),
+    (2, 'Compost Education Day', 'Teach residents practical composting methods.', 'Greenway', 'July 6'),
+    (3, 'Food Drive', 'Collect and package shelf-stable food donations.', 'Downtown', 'Every Saturday'),
+    (3, 'Community Tutoring', 'Support students with reading and math practice.', 'Eastside', 'June 15'),
+    (3, 'Wellness Walk', 'Bring neighbors together for an accessible group walk.', 'Central Park', 'June 22'),
+    (3, 'Senior Check-In Network', 'Connect volunteers with older neighbors for regular check-ins.', 'North Hills', 'June 29'),
+    (3, 'Neighborhood Resource Fair', 'Share local services and practical support resources.', 'Downtown', 'July 6');
+
+INSERT INTO category (name)
+VALUES ('Environment'), ('Community Service'), ('Education'), ('Health and Wellness');
 
 INSERT INTO project_category (project_id, category_id)
-SELECT project.project_id, category.category_id
-FROM project
-JOIN category ON category.name = CASE project.name
-    WHEN 'Park Cleanup' THEN 'Environment'
-    WHEN 'Food Drive' THEN 'Community Service'
-    WHEN 'Community Tutoring' THEN 'Education'
-    WHEN 'Wellness Walk' THEN 'Health and Wellness'
-END
-WHERE project.name IN ('Park Cleanup', 'Food Drive', 'Community Tutoring', 'Wellness Walk')
-ON CONFLICT (project_id, category_id) DO NOTHING;
+VALUES
+    (1, 2), (2, 2), (3, 3), (4, 2), (5, 2),
+    (6, 1), (7, 1), (8, 2), (9, 1), (10, 3),
+    (11, 2), (12, 3), (13, 4), (14, 4), (15, 2);
