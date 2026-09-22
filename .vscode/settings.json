@@ -1,0 +1,5 @@
+{
+    "debug.terminal.clearBeforeReusing": true,
+    "terminal.integrated.allowInUntrustedWorkspace": true,
+    "workbench.externalBrowser": "edge"
+}
