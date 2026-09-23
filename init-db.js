@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 import "dotenv/config";
 import fs from "node:fs/promises";
 import path from "node:path";
