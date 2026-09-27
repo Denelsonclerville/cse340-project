@@ -469,6 +469,10 @@ footer p {
 }
 
 @media (min-width: 768px) {
+    nav {
+        justify-content: flex-end;
+    }
+
     .menu-toggle,
     .menu-close {
         display: none;

@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">PROJECT CATEGORY</p>
+    <h1><%= category.name %></h1>
+</section>
+<section class="project-list" aria-label="Projects in this category">
+    <% if (projects.length) { %>
+        <% projects.forEach((project, index) => { %>
+            <article class="project-row">
+                <span class="card-number"><%= String(index + 1).padStart(2, '0') %></span>
+                <div>
+                    <h2><a href="/project/<%= project.project_id %>"><%= project.title %></a></h2>
+                    <p class="muted"><%= project.description %></p>
+                </div>
+                <p class="muted"><%= project.location %></p>
+                <p class="date"><%= project.date %></p>
+            </article>
+        <% }) %>
+    <% } else { %>
+        <p class="empty-state">No projects are available in this category.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+<article class="page-intro">
+    <p class="eyebrow">SERVICE PROJECT</p>
+    <h1><%= project.title %></h1>
+    <p class="lead"><%= project.description %></p>
+</article>
+<section class="list-card" aria-label="Project details">
+    <p><strong>Date:</strong> <%= project.date %></p>
+    <p><strong>Location:</strong> <%= project.location %></p>
+    <p><strong>Organization:</strong> <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a></p>
+    <div>
+        <strong>Categories:</strong>
+        <% categories.forEach((category) => { %>
+            <a class="tag" href="/category/<%= category.category_id %>"><%= category.name %></a>
+        <% }) %>
+    </div>
+</section>
+<%- include('partials/footer') %>

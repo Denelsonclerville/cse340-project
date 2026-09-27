@@ -9,16 +9,14 @@
         <h2 id="category-list-title">Browse by category</h2>
         <p class="muted"><%= categories.length %> ways to get involved</p>
     </div>
-    <% if (errorMessage) { %>
-        <p class="empty-state"><%= errorMessage %></p>
-    <% } else if (categories.length) { %>
+    <% if (categories.length) { %>
         <ul class="category-grid">
             <% categories.forEach((category, index) => { %>
                 <li class="category-card">
                     <span class="card-number" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
-                    <h3><%= category.name %></h3>
+                    <h3><a href="/category/<%= category.category_id %>"><%= category.name %></a></h3>
                     <p class="muted">Find a meaningful way to contribute.</p>
-                    <a class="text-link" href="/projects">View projects <span aria-hidden="true">&#8594;</span></a>
+                    <a class="text-link" href="/category/<%= category.category_id %>">View projects <span aria-hidden="true">&#8594;</span></a>
                 </li>
             <% }) %>
         </ul>
