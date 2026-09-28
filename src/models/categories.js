@@ -23,3 +23,15 @@ export const getCategoriesByProjectId = async (projectId) => {
   const result = await pool.query(query, [projectId]);
   return result.rows;
 };
+
+export const addCategory = async (name) => {
+  const query = "INSERT INTO category (name) VALUES ($1) RETURNING *;";
+  const result = await pool.query(query, [name]);
+  return result.rows[0];
+};
+
+export const updateCategory = async (id, name) => {
+  const query = "UPDATE category SET name = $1 WHERE category_id = $2 RETURNING *;";
+  const result = await pool.query(query, [name, id]);
+  return result.rows[0];
+};

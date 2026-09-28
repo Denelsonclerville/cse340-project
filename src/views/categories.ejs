@@ -9,6 +9,9 @@
         <h2 id="category-list-title">Browse by category</h2>
         <p class="muted"><%= categories.length %> ways to get involved</p>
     </div>
+    <div style="margin-bottom: 1.5rem;">
+        <a class="button" href="/new-category">Add Category</a>
+    </div>
     <% if (categories.length) { %>
         <ul class="category-grid">
             <% categories.forEach((category, index) => { %>
@@ -16,7 +19,10 @@
                     <span class="card-number" aria-hidden="true"><%= String(index + 1).padStart(2, '0') %></span>
                     <h3><a href="/category/<%= category.category_id %>"><%= category.name %></a></h3>
                     <p class="muted">Find a meaningful way to contribute.</p>
-                    <a class="text-link" href="/category/<%= category.category_id %>">View projects <span aria-hidden="true">&#8594;</span></a>
+                    <div class="category-actions">
+                        <a class="text-link" href="/category/<%= category.category_id %>">View projects <span aria-hidden="true">&#8594;</span></a>
+                        <a class="text-link" href="/edit-category/<%= category.category_id %>">Edit</a>
+                    </div>
                 </li>
             <% }) %>
         </ul>

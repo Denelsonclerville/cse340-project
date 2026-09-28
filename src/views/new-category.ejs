@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">PROJECT CATEGORIES</p>
+    <h1><%= title %></h1>
+    <p class="lead">Create a category to help people find ways to contribute.</p>
+</section>
+<section aria-labelledby="category-form-title">
+    <h2 id="category-form-title">Category details</h2>
+    <% if (error) { %>
+        <p class="empty-state" role="alert"><%= error %></p>
+    <% } %>
+    <form action="/new-category" method="POST">
+        <label for="name">Category name</label>
+        <input id="name" name="name" type="text" value="<%= formData.name %>" minlength="3" maxlength="100" required>
+        <button class="button" type="submit">Add Category</button>
+    </form>
+</section>
+<%- include('partials/footer') %>
