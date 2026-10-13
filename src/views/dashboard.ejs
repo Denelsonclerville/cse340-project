@@ -1,34 +1,73 @@
 <%- include('partials/header') %>
-<section class="page-intro">
+<section class="page-intro dashboard-intro">
     <p class="eyebrow">YOUR ACCOUNT</p>
     <h1><%= title %></h1>
     <% if (error) { %>
-        <p class="empty-state" role="alert"><%= error %></p>
+        <p class="dashboard-error" role="alert"><%= error %></p>
     <% } %>
     <p class="lead">Welcome, <%= user.name %>.</p>
 </section>
-<section>
-    <h2>Account details</h2>
-    <p><strong>Email:</strong> <%= user.email %></p>
-    <p><strong>Role:</strong> <%= user.role %></p>
-</section>
-<section aria-label="Projects you volunteer for">
-    <h2>Projects I Volunteer For</h2>
-    <% if (volunteerProjects.length) { %>
-        <ul>
-            <% volunteerProjects.forEach((project) => { %>
-                <li>
-                    <a href="/project/<%= project.project_id %>"><%= project.title %></a>
-                    <span><%= project.date %> &middot; <%= project.location %> &middot; <%= project.organization_name %></span>
-                    <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
-                        <input type="hidden" name="returnTo" value="dashboard">
-                        <button type="submit">Remove me</button>
-                    </form>
-                </li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p class="empty-state">You have not signed up to volunteer for any projects yet.</p>
-    <% } %>
-</section>
+<div class="dashboard-content">
+    <section class="dashboard-profile" id="profile" aria-labelledby="profile-heading">
+        <div class="dashboard-avatar" aria-hidden="true"><%= user.name.charAt(0).toUpperCase() %></div>
+        <div class="dashboard-profile-content">
+            <p class="eyebrow">YOUR PROFILE</p>
+            <h2 id="profile-heading"><%= user.name %></h2>
+            <dl class="dashboard-profile-details">
+                <div>
+                    <dt>Email</dt>
+                    <dd><%= user.email %></dd>
+                </div>
+                <div>
+                    <dt>Role</dt>
+                    <dd><span class="dashboard-role"><%= user.role %></span></dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+    <section class="dashboard-projects" aria-labelledby="volunteer-projects-heading">
+        <div class="dashboard-section-heading">
+            <div>
+                <p class="eyebrow">YOUR COMMUNITY IMPACT</p>
+                <h2 id="volunteer-projects-heading">Projects I Volunteer For</h2>
+            </div>
+            <% if (volunteerProjects.length) { %>
+                <span class="dashboard-count"><%= volunteerProjects.length %> <%= volunteerProjects.length === 1 ? 'project' : 'projects' %></span>
+            <% } %>
+        </div>
+        <% if (volunteerProjects.length) { %>
+            <ul class="dashboard-project-grid">
+                <% volunteerProjects.forEach((project) => { %>
+                    <li class="dashboard-project-card">
+                        <div class="dashboard-project-card-content">
+                            <p class="dashboard-project-organization"><%= project.organization_name %></p>
+                            <h3><a href="/project/<%= project.project_id %>"><%= project.title %></a></h3>
+                            <dl class="dashboard-project-details">
+                                <div>
+                                    <dt>Date</dt>
+                                    <dd><%= project.date %></dd>
+                                </div>
+                                <div>
+                                    <dt>Location</dt>
+                                    <dd><%= project.location %></dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                            <input type="hidden" name="returnTo" value="dashboard">
+                            <button class="dashboard-remove-button" type="submit">Remove</button>
+                        </form>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <div class="dashboard-empty-state">
+                <span class="dashboard-empty-mark" aria-hidden="true">+</span>
+                <h3>Make a difference in your community</h3>
+                <p>You have not signed up to volunteer for any projects yet. Find a project that inspires you and join in.</p>
+                <a class="dashboard-browse-link" href="/projects">Explore projects</a>
+            </div>
+        <% } %>
+    </section>
+</div>
 <%- include('partials/footer') %>
