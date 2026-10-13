@@ -87,3 +87,54 @@ export const getProjectsByCategoryId = async (categoryId) => {
   const result = await pool.query(query, [categoryId]);
   return result.rows;
 };
+
+const saveProjectCategories = async (client, projectId, categoryIds) => {
+  await client.query("DELETE FROM project_category WHERE project_id = $1;", [projectId]);
+  for (const categoryId of categoryIds) {
+    await client.query(
+      "INSERT INTO project_category (project_id, category_id) VALUES ($1, $2);",
+      [projectId, categoryId],
+    );
+  }
+};
+
+export const addProject = async ({ title, description, date, location, organizationId, categoryIds }) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN;");
+    const result = await client.query(
+      `INSERT INTO project (organization_id, title, description, location, date)
+       VALUES ($1, $2, $3, $4, $5) RETURNING project_id;`,
+      [organizationId, title, description, location, date],
+    );
+    const projectId = result.rows[0].project_id;
+    await saveProjectCategories(client, projectId, categoryIds);
+    await client.query("COMMIT;");
+    return projectId;
+  } catch (error) {
+    await client.query("ROLLBACK;");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const updateProject = async (id, { title, description, date, location, organizationId, categoryIds }) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN;");
+    await client.query(
+      `UPDATE project
+       SET organization_id = $1, title = $2, description = $3, location = $4, date = $5
+       WHERE project_id = $6;`,
+      [organizationId, title, description, location, date, id],
+    );
+    await saveProjectCategories(client, id, categoryIds);
+    await client.query("COMMIT;");
+  } catch (error) {
+    await client.query("ROLLBACK;");
+    throw error;
+  } finally {
+    client.release();
+  }
+};

@@ -4,6 +4,11 @@
     <h1><%= title %></h1>
     <p class="lead">Choose an opportunity that matches your interests, schedule, and neighborhood.</p>
 </section>
+<% if (user && user.role === 'admin') { %>
+    <div class="admin-actions">
+        <a class="button" href="/new-project">Add Project</a>
+    </div>
+<% } %>
 <section class="project-list" aria-label="Service projects">
     <% projects.forEach((project, index) => { %>
         <article class="project-row">
@@ -14,6 +19,9 @@
             <p class="muted"><%= project.location %></p>
             <p class="date"><%= project.date %></p>
             <a class="text-link" href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+            <% if (user && user.role === 'admin') { %>
+                <a class="text-link" href="/edit-project/<%= project.project_id %>">Edit</a>
+            <% } %>
         </article>
     <% }) %>
 </section>

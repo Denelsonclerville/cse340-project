@@ -19,7 +19,19 @@
                 <li><a class="<%= title === 'Organizations' ? 'active' : '' %>" href="/organizations">Organizations</a></li>
                 <li><a class="<%= title === 'Service Projects' ? 'active' : '' %>" href="/projects">Projects</a></li>
                 <li><a class="<%= title === 'Project Categories' ? 'active' : '' %>" href="/categories">Categories</a></li>
+                <% if (user && user.role === 'admin') { %>
+                    <li><a class="<%= title === 'Users' ? 'active' : '' %>" href="/users">Users</a></li>
+                <% } %>
+                <% if (user) { %>
+                    <li><a class="<%= title === 'Dashboard' ? 'active' : '' %>" href="/dashboard">Dashboard</a></li>
+                    <li><form action="/logout" method="POST"><button type="submit">Log out</button></form></li>
+                <% } else { %>
+                    <li><a class="<%= title === 'Log In' ? 'active' : '' %>" href="/login">Log in</a></li>
+                <% } %>
             </ul>
         </nav>
     </header>
     <main>
+        <% if (notice) { %>
+            <p class="notice" role="status"><%= notice %></p>
+        <% } %>

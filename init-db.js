@@ -10,13 +10,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const setupSqlPath = path.join(__dirname, "src", "setup.sql");
 
-try {
+export async function initializeDatabase() {
   const setupSql = await fs.readFile(setupSqlPath, "utf8");
   await pool.query(setupSql);
-  console.log("Database initialized successfully.");
-} catch (error) {
-  console.error("Unable to initialize database:", error);
-  process.exitCode = 1;
-} finally {
-  await pool.end();
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  try {
+    await initializeDatabase();
+    console.log("Database initialized successfully.");
+  } catch (error) {
+    console.error("Unable to initialize database:", error);
+    process.exitCode = 1;
+  } finally {
+    await pool.end();
+  }
 }

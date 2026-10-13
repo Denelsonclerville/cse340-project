@@ -1,9 +1,12 @@
 import express from "express";
+import session from "express-session";
+import { randomBytes } from "node:crypto";
 import { fileURLToPath } from "url";
 import path from "path";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+import { initializeDatabase } from "./init-db.js";
 import routes from "./src/routes/index.js";
 
 const PORT = process.env.PORT || 3000;
@@ -17,6 +20,26 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || randomBytes(32).toString("hex"),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: NODE_ENV === "production",
+    },
+  }),
+);
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  res.locals.error = req.session.error || null;
+  res.locals.notice = req.session.notice || null;
+  delete req.session.error;
+  delete req.session.notice;
+  next();
+});
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -33,6 +56,8 @@ app.use((err, req, res, next) => {
   console.error("Server Error:", err.stack);
   res.status(500).send("Internal Server Error (500)");
 });
+
+await initializeDatabase();
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

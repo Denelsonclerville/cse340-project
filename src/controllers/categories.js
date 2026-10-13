@@ -55,8 +55,19 @@ export const processAddCategory = async (req, res, next) => {
       });
     }
 
-    await addCategory(name);
-    res.redirect("/categories");
+    try {
+      await addCategory(name);
+      res.redirect("/categories");
+    } catch (error) {
+      if (error.code === "23505") {
+        return res.status(400).render("new-category", {
+          title: "Add Category",
+          error: "A category with that name already exists.",
+          formData: { name },
+        });
+      }
+      throw error;
+    }
   } catch (error) {
     next(error);
   }
@@ -102,8 +113,20 @@ export const processEditCategory = async (req, res, next) => {
       });
     }
 
-    await updateCategory(id, name);
-    res.redirect("/categories");
+    try {
+      await updateCategory(id, name);
+      res.redirect("/categories");
+    } catch (error) {
+      if (error.code === "23505") {
+        return res.status(400).render("edit-category", {
+          title: "Edit Category",
+          category,
+          error: "A category with that name already exists.",
+          formData: { name },
+        });
+      }
+      throw error;
+    }
   } catch (error) {
     next(error);
   }

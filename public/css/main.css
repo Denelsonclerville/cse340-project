@@ -181,6 +181,15 @@ nav a:hover {
     padding: 1.25rem 1.5rem;
 }
 
+.notice {
+    background: var(--white);
+    border-left: 5px solid var(--teal);
+    box-shadow: 0 8px 18px rgba(24, 43, 42, .08);
+    color: var(--ink);
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+}
+
 .card-number,
 .tag {
     color: var(--teal);
@@ -485,6 +494,217 @@ footer p {
     }
 }
 
+.login-layout {
+    align-items: stretch;
+    background: var(--white);
+    border: 1px solid rgba(24, 43, 42, .08);
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(24, 43, 42, .12);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 1rem auto;
+    max-width: 960px;
+    min-height: 530px;
+    overflow: hidden;
+}
+
+.login-welcome {
+    background:
+        radial-gradient(ellipse at 5% 95%, rgba(242, 193, 78, .22), transparent 38%),
+        linear-gradient(145deg, #173b38, #1f6f67);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: clamp(2rem, 6vw, 4.5rem);
+    position: relative;
+}
+
+.login-welcome::after {
+    border: 1px solid rgba(255, 253, 248, .14);
+    border-radius: 50%;
+    content: "";
+    bottom: -100px;
+    height: 240px;
+    pointer-events: none;
+    position: absolute;
+    right: -90px;
+    width: 240px;
+}
+
+.login-welcome > * {
+    position: relative;
+    z-index: 1;
+}
+
+.login-welcome .eyebrow {
+    color: var(--yellow);
+}
+
+.login-welcome h1 {
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    letter-spacing: -1.5px;
+    margin: .75rem 0 1.25rem;
+}
+
+.login-welcome > p:not(.eyebrow) {
+    color: rgba(255, 253, 248, .8);
+    max-width: 360px;
+}
+
+.login-highlight {
+    align-items: center;
+    border-top: 1px solid rgba(255, 253, 248, .2);
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+}
+
+.login-highlight-mark {
+    align-items: center;
+    background: var(--yellow);
+    border-radius: 50%;
+    color: var(--ink);
+    display: flex;
+    flex: 0 0 42px;
+    font-size: 1.5rem;
+    height: 42px;
+    justify-content: center;
+    line-height: 1;
+    width: 42px;
+}
+
+.login-highlight p {
+    color: rgba(255, 253, 248, .76);
+    font-size: .9rem;
+    margin: 0;
+}
+
+.login-highlight strong {
+    color: var(--white);
+}
+
+.login-card {
+    align-self: center;
+    justify-self: center;
+    max-width: 440px;
+    padding: clamp(2rem, 5vw, 4rem);
+    width: 100%;
+}
+
+.login-card h2 {
+    font-size: clamp(1.75rem, 3vw, 2.2rem);
+    letter-spacing: -.7px;
+    margin: .6rem 0 .5rem;
+}
+
+.login-subtitle {
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+}
+
+.login-error {
+    background: #fff0ed;
+    border-left: 4px solid var(--coral);
+    border-radius: 4px;
+    color: #8f3021;
+    margin-bottom: 1.25rem;
+    padding: .8rem 1rem;
+}
+
+.login-form {
+    display: grid;
+    gap: .55rem;
+}
+
+.login-form label {
+    font-size: .9rem;
+    font-weight: bold;
+    margin-top: .65rem;
+}
+
+.login-form input {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font: inherit;
+    min-width: 0;
+    padding: .9rem 1rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+    width: 100%;
+}
+
+.login-form input::placeholder {
+    color: #9aa5a1;
+}
+
+.login-form input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(31, 111, 103, .14);
+    outline: none;
+}
+
+.login-button {
+    align-items: center;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    font-weight: bold;
+    justify-content: space-between;
+    margin-top: 1.1rem;
+    padding: 1rem 1.15rem;
+    transition: background .2s ease, transform .2s ease;
+    width: 100%;
+}
+
+.login-button:hover {
+    transform: translateY(-1px);
+}
+
+.login-button span {
+    font-size: 1.2rem;
+}
+
+.login-register {
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .9rem;
+    margin: 1.5rem 0 0;
+    padding-top: 1.25rem;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    .login-layout {
+        grid-template-columns: 1fr;
+        margin: 0 auto;
+        min-height: 0;
+    }
+
+    .login-welcome {
+        min-height: 260px;
+        padding: 2rem 1.5rem;
+    }
+
+    .login-welcome h1 {
+        font-size: 2.35rem;
+        max-width: 480px;
+    }
+
+    .login-highlight {
+        margin-top: 1rem;
+    }
+
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+}
+
 .button {
     background: var(--teal);
     color: var(--white);
@@ -497,6 +717,86 @@ footer p {
 
 .button:hover {
     background: var(--coral);
+}
+
+.admin-actions {
+    margin-bottom: 1.5rem;
+}
+
+.list-actions {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+}
+
+.form-section {
+    max-width: 720px;
+}
+
+.admin-form {
+    display: grid;
+    gap: .65rem;
+    margin-top: 1.25rem;
+}
+
+.admin-form > label,
+.category-picker legend {
+    font-weight: bold;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--ink);
+    font: inherit;
+    margin-bottom: .7rem;
+    min-width: 0;
+    padding: .75rem;
+    width: 100%;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus {
+    border-color: var(--teal);
+    outline: 2px solid rgba(31, 111, 103, .2);
+}
+
+.category-picker {
+    border: 1px solid var(--line);
+    margin: .25rem 0 .5rem;
+    padding: 1rem;
+}
+
+.checkbox-grid {
+    display: grid;
+    gap: .5rem 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-top: .75rem;
+}
+
+.checkbox-option {
+    align-items: center;
+    display: flex;
+    gap: .6rem;
+    min-width: 0;
+}
+
+.checkbox-option input {
+    accent-color: var(--teal);
+    flex: 0 0 auto;
+    height: 1rem;
+    margin: 0;
+    width: 1rem;
+}
+
+.form-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .intro-grid {

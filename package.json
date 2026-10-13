@@ -17,9 +17,11 @@
     "prettier": "^3.x.x"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.x.x",
     "ejs": "^3.x.x",
     "express": "^4.x.x",
+    "express-session": "^1.18.0",
     "pg": "^8.23.0"
   }
 }

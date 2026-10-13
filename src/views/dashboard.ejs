@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">YOUR ACCOUNT</p>
+    <h1><%= title %></h1>
+    <% if (error) { %>
+        <p class="empty-state" role="alert"><%= error %></p>
+    <% } %>
+    <p class="lead">Welcome, <%= user.name %>.</p>
+</section>
+<section>
+    <h2>Account details</h2>
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Role:</strong> <%= user.role %></p>
+</section>
+<%- include('partials/footer') %>

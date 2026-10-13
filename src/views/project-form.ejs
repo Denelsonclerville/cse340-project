@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">SERVICE PROJECT</p>
+    <h1><%= title %></h1>
+    <p class="lead">Set the project details, choose its organization, and assign one or more categories.</p>
+</section>
+<section class="form-section" aria-labelledby="project-form-title">
+    <h2 id="project-form-title">Project details</h2>
+    <% if (error) { %>
+        <p class="empty-state" role="alert"><%= error %></p>
+    <% } %>
+    <form class="admin-form" action="<%= action %>" method="POST">
+        <label for="title">Project title</label>
+        <input id="title" name="title" type="text" value="<%= formData.title %>" maxlength="150" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5" required><%= formData.description %></textarea>
+
+        <label for="organization_id">Organization</label>
+        <select id="organization_id" name="organization_id" required>
+            <option value="">Choose an organization</option>
+            <% organizations.forEach((organization) => { %>
+                <option value="<%= organization.organization_id %>" <%= String(formData.organization_id) === String(organization.organization_id) ? 'selected' : '' %>><%= organization.name %></option>
+            <% }) %>
+        </select>
+
+        <label for="location">Location</label>
+        <input id="location" name="location" type="text" value="<%= formData.location %>" maxlength="255" required>
+
+        <label for="date">Date or schedule</label>
+        <input id="date" name="date" type="text" value="<%= formData.date %>" maxlength="100" placeholder="Example: Every Saturday" required>
+
+        <fieldset class="category-picker">
+            <legend>Project categories</legend>
+            <% if (categories.length) { %>
+                <div class="checkbox-grid">
+                    <% categories.forEach((category) => { %>
+                        <label class="checkbox-option" for="category-<%= category.category_id %>">
+                            <input id="category-<%= category.category_id %>" name="category_ids" type="checkbox" value="<%= category.category_id %>" <%= formData.category_ids.includes(String(category.category_id)) ? 'checked' : '' %>>
+                            <span><%= category.name %></span>
+                        </label>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="muted">Create a category before saving a project.</p>
+            <% } %>
+        </fieldset>
+
+        <div class="form-actions">
+            <button class="button" type="submit"><%= title %></button>
+            <a class="text-link" href="/projects">Cancel</a>
+        </div>
+    </form>
+</section>
+<%- include('partials/footer') %>

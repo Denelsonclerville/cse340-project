@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">COMMUNITY ORGANIZATIONS</p>
+    <h1><%= title %></h1>
+    <p class="lead">Add an organization and keep its public contact details current.</p>
+</section>
+<section class="form-section" aria-labelledby="organization-form-title">
+    <h2 id="organization-form-title">Organization details</h2>
+    <% if (error) { %>
+        <p class="empty-state" role="alert"><%= error %></p>
+    <% } %>
+    <form class="admin-form" action="<%= action %>" method="POST">
+        <label for="name">Organization name</label>
+        <input id="name" name="name" type="text" value="<%= formData.name %>" maxlength="150" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5" required><%= formData.description %></textarea>
+
+        <label for="contact_email">Contact email</label>
+        <input id="contact_email" name="contact_email" type="email" value="<%= formData.contact_email %>" maxlength="255" required>
+
+        <label for="logo_filename">Organization logo</label>
+        <select id="logo_filename" name="logo_filename" required>
+            <option value="">Choose a logo</option>
+            <% organizationLogos.forEach((logo) => { %>
+                <option value="<%= logo %>" <%= formData.logo_filename === logo ? 'selected' : '' %>><%= logo.replace('-logo.png', '') %></option>
+            <% }) %>
+        </select>
+
+        <div class="form-actions">
+            <button class="button" type="submit"><%= title %></button>
+            <a class="text-link" href="/organizations">Cancel</a>
+        </div>
+    </form>
+</section>
+<%- include('partials/footer') %>

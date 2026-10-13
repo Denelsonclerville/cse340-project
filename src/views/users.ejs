@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">ADMINISTRATION</p>
+    <h1><%= title %></h1>
+    <p class="lead">Registered accounts</p>
+</section>
+<section aria-label="Registered users">
+    <% if (users.length) { %>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email (Username)</th>
+                        <th scope="col">Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((registeredUser) => { %>
+                        <tr>
+                            <td><%= registeredUser.name %></td>
+                            <td><%= registeredUser.email %></td>
+                            <td><%= registeredUser.role %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <p class="empty-state">No users are registered yet.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

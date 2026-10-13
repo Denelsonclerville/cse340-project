@@ -14,5 +14,8 @@
             <a class="tag" href="/category/<%= category.category_id %>"><%= category.name %></a>
         <% }) %>
     </div>
+    <% if (user && user.role === 'admin') { %>
+        <a class="text-link" href="/edit-project/<%= project.project_id %>">Edit project</a>
+    <% } %>
 </section>
 <%- include('partials/footer') %>

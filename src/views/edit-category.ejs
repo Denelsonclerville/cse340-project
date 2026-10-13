@@ -1,0 +1,21 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">PROJECT CATEGORIES</p>
+    <h1><%= title %></h1>
+    <p class="lead">Update the category name used to organize service projects.</p>
+</section>
+<section class="form-section" aria-labelledby="category-form-title">
+    <h2 id="category-form-title">Category details</h2>
+    <% if (error) { %>
+        <p class="empty-state" role="alert"><%= error %></p>
+    <% } %>
+    <form class="admin-form" action="/edit-category/<%= category.category_id %>" method="POST">
+        <label for="name">Category name</label>
+        <input id="name" name="name" type="text" value="<%= formData.name %>" minlength="3" maxlength="100" required>
+        <div class="form-actions">
+            <button class="button" type="submit">Save Category</button>
+            <a class="text-link" href="/categories">Cancel</a>
+        </div>
+    </form>
+</section>
+<%- include('partials/footer') %>
