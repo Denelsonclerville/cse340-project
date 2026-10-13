@@ -4,6 +4,7 @@ import {
   getAllUsers,
   validatePassword,
 } from "../models/users.js";
+import { getVolunteerProjectsByUserId } from "../models/projects.js";
 
 export const showLoginPage = (req, res) => {
   if (req.session.user) {
@@ -117,8 +118,13 @@ export const processLogout = (req, res, next) => {
   });
 };
 
-export const showDashboard = (req, res) => {
-  res.render("dashboard", { title: "Dashboard" });
+export const showDashboard = async (req, res, next) => {
+  try {
+    const volunteerProjects = await getVolunteerProjectsByUserId(req.session.user.id);
+    res.render("dashboard", { title: "Dashboard", volunteerProjects });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const showUsersPage = async (req, res, next) => {

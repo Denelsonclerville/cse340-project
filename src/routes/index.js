@@ -17,6 +17,8 @@ import {
   processEditProject,
   showProjectsPage,
   showProjectDetailsPage,
+  processVolunteerRemoval,
+  processVolunteerSignup,
 } from "../controllers/projects.js";
 import {
   showAddCategoryPage,
@@ -74,6 +76,8 @@ router.post(
 );
 router.get("/projects", showProjectsPage);
 router.get("/project/:id", showProjectDetailsPage);
+router.post("/project/:id/volunteer", requireLogin, processVolunteerSignup);
+router.post("/project/:id/unvolunteer", requireLogin, processVolunteerRemoval);
 router.get(
   "/new-project",
   requireLogin,

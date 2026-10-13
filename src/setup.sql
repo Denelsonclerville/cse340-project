@@ -25,6 +25,12 @@ CREATE TABLE IF NOT EXISTS project (
     date VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS project_volunteers (
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES project(project_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, project_id)
+);
+
 CREATE TABLE IF NOT EXISTS category (
     category_id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL

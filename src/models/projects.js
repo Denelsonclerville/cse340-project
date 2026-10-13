@@ -68,6 +68,52 @@ export const getProjectDetails = async (id) => {
   return result.rows[0];
 };
 
+export const addVolunteer = async (userId, projectId) => {
+  await pool.query(
+    `INSERT INTO project_volunteers (user_id, project_id)
+     VALUES ($1, $2)
+     ON CONFLICT (user_id, project_id) DO NOTHING;`,
+    [userId, projectId],
+  );
+};
+
+export const removeVolunteer = async (userId, projectId) => {
+  await pool.query(
+    "DELETE FROM project_volunteers WHERE user_id = $1 AND project_id = $2;",
+    [userId, projectId],
+  );
+};
+
+export const getVolunteerProjectsByUserId = async (userId) => {
+  const result = await pool.query(
+    `SELECT
+       project.project_id,
+       project.title,
+       project.date,
+       project.location,
+       organization.name AS organization_name
+     FROM project_volunteers
+     JOIN project ON project.project_id = project_volunteers.project_id
+     JOIN organization ON organization.organization_id = project.organization_id
+     WHERE project_volunteers.user_id = $1
+     ORDER BY project.project_id ASC;`,
+    [userId],
+  );
+  return result.rows;
+};
+
+export const isUserVolunteering = async (userId, projectId) => {
+  const result = await pool.query(
+    `SELECT EXISTS (
+       SELECT 1
+       FROM project_volunteers
+       WHERE user_id = $1 AND project_id = $2
+     ) AS is_volunteering;`,
+    [userId, projectId],
+  );
+  return result.rows[0].is_volunteering;
+};
+
 export const getProjectsByCategoryId = async (categoryId) => {
   const query = `
     SELECT

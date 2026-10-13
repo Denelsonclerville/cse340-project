@@ -14,6 +14,18 @@
             <a class="tag" href="/category/<%= category.category_id %>"><%= category.name %></a>
         <% }) %>
     </div>
+    <% if (user) { %>
+        <% if (isVolunteering) { %>
+            <p class="notice" role="status">You are volunteering for this project.</p>
+            <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                <button type="submit">Remove me as a volunteer</button>
+            </form>
+        <% } else { %>
+            <form action="/project/<%= project.project_id %>/volunteer" method="POST">
+                <button type="submit">Volunteer for this project</button>
+            </form>
+        <% } %>
+    <% } %>
     <% if (user && user.role === 'admin') { %>
         <a class="text-link" href="/edit-project/<%= project.project_id %>">Edit project</a>
     <% } %>

@@ -12,4 +12,23 @@
     <p><strong>Email:</strong> <%= user.email %></p>
     <p><strong>Role:</strong> <%= user.role %></p>
 </section>
+<section aria-label="Projects you volunteer for">
+    <h2>Projects I Volunteer For</h2>
+    <% if (volunteerProjects.length) { %>
+        <ul>
+            <% volunteerProjects.forEach((project) => { %>
+                <li>
+                    <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                    <span><%= project.date %> &middot; <%= project.location %> &middot; <%= project.organization_name %></span>
+                    <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                        <input type="hidden" name="returnTo" value="dashboard">
+                        <button type="submit">Remove me</button>
+                    </form>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p class="empty-state">You have not signed up to volunteer for any projects yet.</p>
+    <% } %>
+</section>
 <%- include('partials/footer') %>
