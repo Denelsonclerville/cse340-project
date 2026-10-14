@@ -1,4 +1,4 @@
- import express from "express";
+import express from "express";
 import session from "express-session";
 import { randomBytes } from "node:crypto";
 import { fileURLToPath } from "url";
@@ -15,6 +15,9 @@ const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || "development";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+
+// Konfigirasyon Trust Proxy pou Render
+app.set("trust proxy", 1);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
