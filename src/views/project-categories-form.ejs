@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<section class="page-intro">
+    <p class="eyebrow">PROJECT CATEGORIES</p>
+    <h1>Assign Categories</h1>
+    <p class="lead">Choose the categories that apply to <%= project.title %>.</p>
+</section>
+<section class="form-section" aria-labelledby="project-categories-title">
+    <h2 id="project-categories-title">Categories</h2>
+    <form class="admin-form" action="/project/<%= project.project_id %>/categories" method="POST">
+        <% if (categories.length) { %>
+            <fieldset class="category-picker">
+                <legend>Project categories</legend>
+                <div class="checkbox-grid">
+                    <% categories.forEach((category) => { %>
+                        <label class="checkbox-option" for="category-<%= category.category_id %>">
+                            <input
+                                id="category-<%= category.category_id %>"
+                                name="category_ids"
+                                type="checkbox"
+                                value="<%= category.category_id %>"
+                                <%= selectedCategoryIds.includes(String(category.category_id)) ? 'checked' : '' %>>
+                            <span><%= category.name %></span>
+                        </label>
+                    <% }) %>
+                </div>
+            </fieldset>
+        <% } else { %>
+            <p class="empty-state">No categories are available. Create a category first.</p>
+        <% } %>
+        <div class="form-actions">
+            <button class="button" type="submit">Save Categories</button>
+            <a class="text-link" href="/project/<%= project.project_id %>">Cancel</a>
+        </div>
+    </form>
+</section>
+<%- include('partials/footer') %>

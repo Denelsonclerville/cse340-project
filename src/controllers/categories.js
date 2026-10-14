@@ -6,6 +6,7 @@ import {
   updateCategory,
 } from "../models/categories.js";
 import { getProjectsByCategoryId } from "../models/projects.js";
+import { consumeFormDraft, redirectWithFormError } from "./flash.js";
 
 const validateCategoryName = (name) => {
   const trimmedName = String(name ?? "").trim();
@@ -37,8 +38,7 @@ export const showCategoriesPage = async (req, res, next) => {
 export const showAddCategoryPage = (req, res) => {
   res.render("new-category", {
     title: "Add Category",
-    error: null,
-    formData: { name: "" },
+    formData: consumeFormDraft(req, "newCategoryFormData", { name: "" }),
   });
 };
 
@@ -48,22 +48,25 @@ export const processAddCategory = async (req, res, next) => {
     const error = validateCategoryName(name);
 
     if (error) {
-      return res.status(400).render("new-category", {
-        title: "Add Category",
-        error,
+      return redirectWithFormError(req, res, {
+        path: "/new-category",
+        key: "newCategoryFormData",
         formData: { name },
+        message: error,
       });
     }
 
     try {
       await addCategory(name);
+      req.session.notice = "Category created successfully.";
       res.redirect("/categories");
     } catch (error) {
       if (error.code === "23505") {
-        return res.status(400).render("new-category", {
-          title: "Add Category",
-          error: "A category with that name already exists.",
+        return redirectWithFormError(req, res, {
+          path: "/new-category",
+          key: "newCategoryFormData",
           formData: { name },
+          message: "A category with that name already exists.",
         });
       }
       throw error;
@@ -84,8 +87,11 @@ export const showEditCategoryPage = async (req, res, next) => {
     res.render("edit-category", {
       title: "Edit Category",
       category,
-      error: null,
-      formData: { name: category.name },
+      formData: consumeFormDraft(
+        req,
+        `editCategoryFormData:${category.category_id}`,
+        { name: category.name },
+      ),
     });
   } catch (error) {
     next(error);
@@ -105,24 +111,25 @@ export const processEditCategory = async (req, res, next) => {
     const error = validateCategoryName(name);
 
     if (error) {
-      return res.status(400).render("edit-category", {
-        title: "Edit Category",
-        category,
-        error,
+      return redirectWithFormError(req, res, {
+        path: `/edit-category/${id}`,
+        key: `editCategoryFormData:${id}`,
         formData: { name },
+        message: error,
       });
     }
 
     try {
       await updateCategory(id, name);
+      req.session.notice = "Category updated successfully.";
       res.redirect("/categories");
     } catch (error) {
       if (error.code === "23505") {
-        return res.status(400).render("edit-category", {
-          title: "Edit Category",
-          category,
-          error: "A category with that name already exists.",
+        return redirectWithFormError(req, res, {
+          path: `/edit-category/${id}`,
+          key: `editCategoryFormData:${id}`,
           formData: { name },
+          message: "A category with that name already exists.",
         });
       }
       throw error;

@@ -6,9 +6,6 @@
 </section>
 <section class="form-section" aria-labelledby="organization-form-title">
     <h2 id="organization-form-title">Organization details</h2>
-    <% if (error) { %>
-        <p class="empty-state" role="alert"><%= error %></p>
-    <% } %>
     <form class="admin-form" action="<%= action %>" method="POST">
         <label for="name">Organization name</label>
         <input id="name" name="name" type="text" value="<%= formData.name %>" maxlength="150" required>

@@ -17,6 +17,8 @@ import {
   processEditProject,
   showProjectsPage,
   showProjectDetailsPage,
+  showProjectCategoriesPage,
+  processProjectCategories,
   processVolunteerRemoval,
   processVolunteerSignup,
 } from "../controllers/projects.js";
@@ -75,6 +77,18 @@ router.post(
   processEditOrganization,
 );
 router.get("/projects", showProjectsPage);
+router.get(
+  "/project/:id/categories",
+  requireLogin,
+  requireRole("admin"),
+  showProjectCategoriesPage,
+);
+router.post(
+  "/project/:id/categories",
+  requireLogin,
+  requireRole("admin"),
+  processProjectCategories,
+);
 router.get("/project/:id", showProjectDetailsPage);
 router.post("/project/:id/volunteer", requireLogin, processVolunteerSignup);
 router.post("/project/:id/unvolunteer", requireLogin, processVolunteerRemoval);

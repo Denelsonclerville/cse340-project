@@ -31,7 +31,7 @@ export const getHomePageData = async () => {
   };
 };
 
-export const getUpcomingProjects = async (number_of_projects) => {
+export const getAllProjects = async () => {
   const query = `
     SELECT
       project.project_id,
@@ -43,10 +43,9 @@ export const getUpcomingProjects = async (number_of_projects) => {
       organization.name AS organization_name
     FROM project
     JOIN organization ON organization.organization_id = project.organization_id
-    ORDER BY project.project_id ASC
-    LIMIT $1;
+    ORDER BY project.project_id ASC;
   `;
-  const result = await pool.query(query, [number_of_projects]);
+  const result = await pool.query(query);
   return result.rows;
 };
 
@@ -144,7 +143,7 @@ const saveProjectCategories = async (client, projectId, categoryIds) => {
   }
 };
 
-export const addProject = async ({ title, description, date, location, organizationId, categoryIds }) => {
+export const addProject = async ({ title, description, date, location, organizationId }) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN;");
@@ -154,7 +153,6 @@ export const addProject = async ({ title, description, date, location, organizat
       [organizationId, title, description, location, date],
     );
     const projectId = result.rows[0].project_id;
-    await saveProjectCategories(client, projectId, categoryIds);
     await client.query("COMMIT;");
     return projectId;
   } catch (error) {
@@ -165,7 +163,7 @@ export const addProject = async ({ title, description, date, location, organizat
   }
 };
 
-export const updateProject = async (id, { title, description, date, location, organizationId, categoryIds }) => {
+export const updateProject = async (id, { title, description, date, location, organizationId }) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN;");
@@ -175,7 +173,20 @@ export const updateProject = async (id, { title, description, date, location, or
        WHERE project_id = $6;`,
       [organizationId, title, description, location, date, id],
     );
-    await saveProjectCategories(client, id, categoryIds);
+    await client.query("COMMIT;");
+  } catch (error) {
+    await client.query("ROLLBACK;");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+export const updateProjectCategories = async (projectId, categoryIds) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN;");
+    await saveProjectCategories(client, projectId, categoryIds);
     await client.query("COMMIT;");
   } catch (error) {
     await client.query("ROLLBACK;");

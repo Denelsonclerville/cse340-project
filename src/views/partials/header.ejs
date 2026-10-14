@@ -63,3 +63,6 @@
         <% if (notice) { %>
             <p class="notice" role="status"><%= notice %></p>
         <% } %>
+        <% if (error) { %>
+            <p class="empty-state" role="alert"><%= error %></p>
+        <% } %>

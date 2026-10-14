@@ -3,15 +3,15 @@ import {
   addProject,
   getProjectDetails,
   getProjectsByCategoryId,
-  getUpcomingProjects,
+  getAllProjects,
   isUserVolunteering,
   removeVolunteer,
   updateProject,
+  updateProjectCategories,
 } from "../models/projects.js";
 import { getAllCategories, getCategoriesByProjectId } from "../models/categories.js";
 import { getAllOrganizations } from "../models/organizations.js";
-
-const NUMBER_OF_UPCOMING_PROJECTS = 5;
+import { consumeFormDraft, redirectWithFormError } from "./flash.js";
 
 const getProjectFormData = (body = {}) => ({
   title: String(body.title ?? "").trim(),
@@ -19,12 +19,9 @@ const getProjectFormData = (body = {}) => ({
   date: String(body.date ?? "").trim(),
   location: String(body.location ?? "").trim(),
   organization_id: String(body.organization_id ?? ""),
-  category_ids: (Array.isArray(body.category_ids) ? body.category_ids : [body.category_ids])
-    .filter(Boolean)
-    .map(String),
 });
 
-const getProjectFormDataError = (formData, organizations, categories) => {
+const getProjectFormDataError = (formData, organizations) => {
   if (!formData.title || formData.title.length > 150) return "Title is required and must be 150 characters or fewer.";
   if (!formData.description) return "Description is required.";
   if (!formData.date || formData.date.length > 100) return "Date is required and must be 100 characters or fewer.";
@@ -32,22 +29,18 @@ const getProjectFormDataError = (formData, organizations, categories) => {
   if (!organizations.some((organization) => String(organization.organization_id) === formData.organization_id)) {
     return "Choose an organization.";
   }
-  if (!formData.category_ids.length) return "Choose at least one category.";
-  if (formData.category_ids.some((id) => !categories.some((category) => String(category.category_id) === id))) {
-    return "Choose valid categories.";
-  }
   return null;
 };
 
-const renderProjectForm = async (res, { title, action, formData, error = null, status = 200 }) => {
-  const [organizations, categories] = await Promise.all([getAllOrganizations(), getAllCategories()]);
-  res.status(status).render("project-form", { title, action, formData, error, organizations, categories });
+const renderProjectForm = async (res, { title, action, formData }) => {
+  const organizations = await getAllOrganizations();
+  res.render("project-form", { title, action, formData, organizations });
 };
 
 export const showProjectsPage = async (req, res, next) => {
   try {
-    const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
-    res.render("projects", { title: "Upcoming Service Projects", projects });
+    const projects = await getAllProjects();
+    res.render("projects", { title: "Service Projects", projects });
   } catch (error) {
     next(error);
   }
@@ -113,7 +106,9 @@ export const showAddProjectPage = async (req, res, next) => {
     await renderProjectForm(res, {
       title: "Add Project",
       action: "/new-project",
-      formData: { title: "", description: "", date: "", location: "", organization_id: "", category_ids: [] },
+      formData: consumeFormDraft(req, "newProjectFormData", {
+        title: "", description: "", date: "", location: "", organization_id: "",
+      }),
     });
   } catch (error) {
     next(error);
@@ -123,10 +118,12 @@ export const showAddProjectPage = async (req, res, next) => {
 export const processAddProject = async (req, res, next) => {
   const formData = getProjectFormData(req.body);
   try {
-    const [organizations, categories] = await Promise.all([getAllOrganizations(), getAllCategories()]);
-    const error = getProjectFormDataError(formData, organizations, categories);
+    const organizations = await getAllOrganizations();
+    const error = getProjectFormDataError(formData, organizations);
     if (error) {
-      return await renderProjectForm(res, { title: "Add Project", action: "/new-project", formData, error, status: 400 });
+      return redirectWithFormError(req, res, {
+        path: "/new-project", key: "newProjectFormData", formData, message: error,
+      });
     }
     await addProject({
       title: formData.title,
@@ -134,8 +131,8 @@ export const processAddProject = async (req, res, next) => {
       date: formData.date,
       location: formData.location,
       organizationId: formData.organization_id,
-      categoryIds: formData.category_ids,
     });
+    req.session.notice = "Project created successfully.";
     res.redirect("/projects");
   } catch (error) {
     next(error);
@@ -144,19 +141,15 @@ export const processAddProject = async (req, res, next) => {
 
 export const showEditProjectPage = async (req, res, next) => {
   try {
-    const [project, categories] = await Promise.all([
-      getProjectDetails(req.params.id),
-      getCategoriesByProjectId(req.params.id),
-    ]);
+    const project = await getProjectDetails(req.params.id);
     if (!project) return res.status(404).send("Project not found");
     await renderProjectForm(res, {
       title: "Edit Project",
       action: `/edit-project/${project.project_id}`,
-      formData: {
+      formData: consumeFormDraft(req, `editProjectFormData:${project.project_id}`, {
         ...project,
         organization_id: String(project.organization_id),
-        category_ids: categories.map(({ category_id }) => String(category_id)),
-      },
+      }),
     });
   } catch (error) {
     next(error);
@@ -168,11 +161,14 @@ export const processEditProject = async (req, res, next) => {
   try {
     const project = await getProjectDetails(req.params.id);
     if (!project) return res.status(404).send("Project not found");
-    const [organizations, categories] = await Promise.all([getAllOrganizations(), getAllCategories()]);
-    const error = getProjectFormDataError(formData, organizations, categories);
+    const organizations = await getAllOrganizations();
+    const error = getProjectFormDataError(formData, organizations);
     if (error) {
-      return await renderProjectForm(res, {
-        title: "Edit Project", action: `/edit-project/${req.params.id}`, formData, error, status: 400,
+      return redirectWithFormError(req, res, {
+        path: `/edit-project/${req.params.id}`,
+        key: `editProjectFormData:${req.params.id}`,
+        formData,
+        message: error,
       });
     }
     await updateProject(req.params.id, {
@@ -181,9 +177,70 @@ export const processEditProject = async (req, res, next) => {
       date: formData.date,
       location: formData.location,
       organizationId: formData.organization_id,
-      categoryIds: formData.category_ids,
     });
+    req.session.notice = "Project updated successfully.";
     res.redirect(`/project/${req.params.id}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const showProjectCategoriesPage = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const [project, categories, assignedCategories] = await Promise.all([
+      getProjectDetails(id),
+      getAllCategories(),
+      getCategoriesByProjectId(id),
+    ]);
+    if (!project) return res.status(404).send("Project not found");
+
+    const formKey = `projectCategoryIds:${id}`;
+    const selectedCategoryIds = consumeFormDraft(
+      req,
+      formKey,
+      assignedCategories.map(({ category_id }) => String(category_id)),
+    );
+    res.render("project-categories-form", {
+      title: "Assign Categories",
+      project,
+      categories,
+      selectedCategoryIds,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const processProjectCategories = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const project = await getProjectDetails(id);
+    if (!project) return res.status(404).send("Project not found");
+
+    const submittedIds = req.body?.category_ids ?? [];
+    const categoryIds = [...new Set(
+      (Array.isArray(submittedIds) ? submittedIds : [submittedIds])
+        .filter(Boolean)
+        .map(String),
+    )];
+    const categories = await getAllCategories();
+    if (categoryIds.some((categoryId) =>
+      !categories.some(({ category_id }) => String(category_id) === categoryId)
+    )) {
+      return redirectWithFormError(req, res, {
+        path: `/project/${id}/categories`,
+        key: `projectCategoryIds:${id}`,
+        formData: categoryIds.filter((categoryId) =>
+          categories.some(({ category_id }) => String(category_id) === categoryId)
+        ),
+        message: "Choose valid categories.",
+      });
+    }
+
+    await updateProjectCategories(id, categoryIds);
+    req.session.notice = "Project categories updated successfully.";
+    res.redirect(`/project/${id}`);
   } catch (error) {
     next(error);
   }

@@ -4,6 +4,7 @@ import {
   getOrganizationById,
   updateOrganization,
 } from "../models/organizations.js";
+import { consumeFormDraft, redirectWithFormError } from "./flash.js";
 
 const organizationLogos = ["brightfuture-logo.png", "greenharvest-logo.png", "unityserve-logo.png"];
 
@@ -22,8 +23,8 @@ const validateOrganization = (formData) => {
   return null;
 };
 
-const renderOrganizationForm = (res, { title, action, formData, error = null, status = 200 }) => {
-  res.status(status).render("organization-form", { title, action, formData, error, organizationLogos });
+const renderOrganizationForm = (res, { title, action, formData }) => {
+  res.render("organization-form", { title, action, formData, organizationLogos });
 };
 
 export const showOrganizationsPage = async (req, res, next) => {
@@ -56,7 +57,9 @@ export const showAddOrganizationPage = (req, res) => {
   renderOrganizationForm(res, {
     title: "Add Organization",
     action: "/new-organization",
-    formData: { name: "", description: "", contact_email: "", logo_filename: "" },
+    formData: consumeFormDraft(req, "newOrganizationFormData", {
+      name: "", description: "", contact_email: "", logo_filename: "",
+    }),
   });
 };
 
@@ -64,8 +67,11 @@ export const processAddOrganization = async (req, res, next) => {
   const formData = getOrganizationFormData(req.body);
   const error = validateOrganization(formData);
   if (error) {
-    return renderOrganizationForm(res, {
-      title: "Add Organization", action: "/new-organization", formData, error, status: 400,
+    return redirectWithFormError(req, res, {
+      path: "/new-organization",
+      key: "newOrganizationFormData",
+      formData,
+      message: error,
     });
   }
 
@@ -76,12 +82,15 @@ export const processAddOrganization = async (req, res, next) => {
       contactEmail: formData.contact_email,
       logoFilename: formData.logo_filename,
     });
+    req.session.notice = "Organization created successfully.";
     res.redirect("/organizations");
   } catch (error) {
     if (error.code === "23505") {
-      return renderOrganizationForm(res, {
-        title: "Add Organization", action: "/new-organization", formData,
-        error: "An organization with that name already exists.", status: 400,
+      return redirectWithFormError(req, res, {
+        path: "/new-organization",
+        key: "newOrganizationFormData",
+        formData,
+        message: "An organization with that name already exists.",
       });
     }
     next(error);
@@ -95,7 +104,11 @@ export const showEditOrganizationPage = async (req, res, next) => {
     renderOrganizationForm(res, {
       title: "Edit Organization",
       action: `/edit-organization/${organization.organization_id}`,
-      formData: organization,
+      formData: consumeFormDraft(
+        req,
+        `editOrganizationFormData:${organization.organization_id}`,
+        organization,
+      ),
     });
   } catch (error) {
     next(error);
@@ -106,9 +119,11 @@ export const processEditOrganization = async (req, res, next) => {
   const formData = getOrganizationFormData(req.body);
   const error = validateOrganization(formData);
   if (error) {
-    return renderOrganizationForm(res, {
-      title: "Edit Organization", action: `/edit-organization/${req.params.id}`,
-      formData, error, status: 400,
+    return redirectWithFormError(req, res, {
+      path: `/edit-organization/${req.params.id}`,
+      key: `editOrganizationFormData:${req.params.id}`,
+      formData,
+      message: error,
     });
   }
 
@@ -121,12 +136,15 @@ export const processEditOrganization = async (req, res, next) => {
       contactEmail: formData.contact_email,
       logoFilename: formData.logo_filename,
     });
+    req.session.notice = "Organization updated successfully.";
     res.redirect("/organizations");
   } catch (error) {
     if (error.code === "23505") {
-      return renderOrganizationForm(res, {
-        title: "Edit Organization", action: `/edit-organization/${req.params.id}`,
-        formData, error: "An organization with that name already exists.", status: 400,
+      return redirectWithFormError(req, res, {
+        path: `/edit-organization/${req.params.id}`,
+        key: `editOrganizationFormData:${req.params.id}`,
+        formData,
+        message: "An organization with that name already exists.",
       });
     }
     next(error);

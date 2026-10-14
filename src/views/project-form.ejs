@@ -2,13 +2,10 @@
 <section class="page-intro">
     <p class="eyebrow">SERVICE PROJECT</p>
     <h1><%= title %></h1>
-    <p class="lead">Set the project details, choose its organization, and assign one or more categories.</p>
+    <p class="lead">Set the project details and choose its organization. Categories can be assigned from the project details page.</p>
 </section>
 <section class="form-section" aria-labelledby="project-form-title">
     <h2 id="project-form-title">Project details</h2>
-    <% if (error) { %>
-        <p class="empty-state" role="alert"><%= error %></p>
-    <% } %>
     <form class="admin-form" action="<%= action %>" method="POST">
         <label for="title">Project title</label>
         <input id="title" name="title" type="text" value="<%= formData.title %>" maxlength="150" required>
@@ -29,22 +26,6 @@
 
         <label for="date">Date or schedule</label>
         <input id="date" name="date" type="text" value="<%= formData.date %>" maxlength="100" placeholder="Example: Every Saturday" required>
-
-        <fieldset class="category-picker">
-            <legend>Project categories</legend>
-            <% if (categories.length) { %>
-                <div class="checkbox-grid">
-                    <% categories.forEach((category) => { %>
-                        <label class="checkbox-option" for="category-<%= category.category_id %>">
-                            <input id="category-<%= category.category_id %>" name="category_ids" type="checkbox" value="<%= category.category_id %>" <%= formData.category_ids.includes(String(category.category_id)) ? 'checked' : '' %>>
-                            <span><%= category.name %></span>
-                        </label>
-                    <% }) %>
-                </div>
-            <% } else { %>
-                <p class="muted">Create a category before saving a project.</p>
-            <% } %>
-        </fieldset>
 
         <div class="form-actions">
             <button class="button" type="submit"><%= title %></button>

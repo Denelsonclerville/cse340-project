@@ -6,9 +6,6 @@
 </section>
 <section aria-labelledby="category-form-title">
     <h2 id="category-form-title">Category details</h2>
-    <% if (error) { %>
-        <p class="empty-state" role="alert"><%= error %></p>
-    <% } %>
     <form action="/new-category" method="POST">
         <label for="name">Category name</label>
         <input id="name" name="name" type="text" value="<%= formData.name %>" minlength="3" maxlength="100" required>
