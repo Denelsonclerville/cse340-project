@@ -40,10 +40,25 @@ export const getAllProjects = async () => {
       project.date,
       project.location,
       project.organization_id,
-      organization.name AS organization_name
+      organization.name AS organization_name,
+      (
+        SELECT COALESCE(
+          json_agg(
+            json_build_object(
+              'category_id', category.category_id,
+              'name', category.name
+            )
+            ORDER BY category.name
+          ),
+          '[]'::json
+        )
+        FROM project_category
+        JOIN category ON category.category_id = project_category.category_id
+        WHERE project_category.project_id = project.project_id
+      ) AS categories
     FROM project
     JOIN organization ON organization.organization_id = project.organization_id
-    ORDER BY project.project_id ASC;
+    ORDER BY project.project_id DESC;
   `;
   const result = await pool.query(query);
   return result.rows;
